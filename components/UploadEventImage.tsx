@@ -26,7 +26,7 @@ export default function UploadEventImage({
         />
 
         <div
-          className="absolute right-4 top-4 cursor-pointer rounded-full bg-foreground/10 p-1 backdrop-blur-3xl transition hover:bg-foreground/15"
+          className="absolute right-4 top-4 cursor-pointer rounded-full bg-background/80 p-1 backdrop-blur-3xl transition hover:bg-accent"
           onClick={removeImage}
         >
           <XIcon />
@@ -37,7 +37,7 @@ export default function UploadEventImage({
 
   return (
     <UploadDropzone
-      className="ut-label:text-primary ut-upload-icon:text-muted-foreground ut-button:bg-secondary border-border"
+      className="border-border ut-button:bg-secondary ut-label:text-primary ut-upload-icon:text-muted-foreground"
       endpoint="eventImage"
       onClientUploadComplete={(res) => {
         console.log("Files: ", res[0].url);

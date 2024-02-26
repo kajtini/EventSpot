@@ -9,10 +9,10 @@ import hero from "@/public/hero.png";
 export default function Home() {
   return (
     <>
-      <section className="border-b bg-gradient-to-tr from-foreground/5 to-background">
+      <section className="border-b bg-gradient-to-tl from-muted-foreground/5 to-background">
         <div className="container grid grid-cols-1 gap-10 py-14 md:grid-cols-2 md:py-32">
-          <div className="flex flex-col items-start  gap-5 self-center text-start">
-            <h1 className="max-w-xl text-balance text-4xl font-bold md:text-5xl">
+          <div className="flex flex-col items-start  gap-7 self-center text-start">
+            <h1 className="max-w-xl text-balance text-4xl font-bold lg:text-6xl">
               EventSpot: Your Ticket to Local Excitement
             </h1>
             <p className="max-w-2xl text-balance text-lg leading-8 text-muted-foreground">

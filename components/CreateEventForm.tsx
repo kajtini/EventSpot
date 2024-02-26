@@ -2,6 +2,7 @@
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { redirect, useRouter } from "next/navigation";
 
 import DatePicker from "@/components/DatePicker";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,6 @@ import {
 } from "@/components/ui/select";
 import { eventCategories } from "@/constants";
 import { createEvent } from "@/lib/actions";
-import { redirect } from "next/navigation";
 interface FormFields {
   title: string;
   description: string;
@@ -42,6 +42,7 @@ interface FormFields {
 }
 
 export default function CreateEventForm() {
+  const router = useRouter();
   const form = useForm<FormFields>({
     defaultValues: {
       title: "",
@@ -64,6 +65,8 @@ export default function CreateEventForm() {
       if (eventId) {
         form.reset();
         toast.success("Event has been created");
+
+        router.push(`/events/${eventId}`);
       }
     } catch (err) {
       console.error(err);
@@ -73,6 +76,8 @@ export default function CreateEventForm() {
   const isFree = form.watch("is_free");
   const startDate = form.watch("start_date");
   const endDate = form.watch("end_date");
+
+  console.log(new Date(startDate));
 
   return (
     <Form {...form}>

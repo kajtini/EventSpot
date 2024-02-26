@@ -8,7 +8,7 @@ import NavItems from "@/components/NavItems";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 border-b bg-background/85 py-5 backdrop-blur-3xl">
+    <header className="sticky top-0 z-50 border-b bg-background/85 py-5 backdrop-blur-3xl">
       <div className="container flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Waves size={24} />
