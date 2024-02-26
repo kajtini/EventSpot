@@ -26,6 +26,7 @@ export default function Home() {
             src={hero}
             alt="Hero image"
             className="max-h-[70vh] self-center object-contain 2xl:max-h-[50vh]"
+            priority
           />
         </div>
       </section>

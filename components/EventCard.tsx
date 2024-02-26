@@ -66,7 +66,7 @@ export default function EventCard({ event }: EventCardProps) {
 
         <Link
           href={`/events/${event_id}`}
-          className="absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded-lg bg-accent bg-background/80 px-3 py-2 backdrop-blur-3xl transition hover:bg-accent"
+          className="absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded-lg bg-background/80 px-3 py-2 backdrop-blur-3xl transition hover:bg-accent"
         >
           <ExternalLinkIcon size={18} />
           <span>Read more</span>

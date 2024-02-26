@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Suspense } from "react";
+import { TicketIcon } from "lucide-react";
 
 import { getEventById } from "@/lib/data";
 import EventDate from "@/components/EventDate";
@@ -8,7 +9,6 @@ import EventLocation from "@/components/EventLocation";
 import EventHostInfo from "@/components/EventHostInfo";
 import EventHostInfoSkeleton from "@/skeletons/EventHostInfoSkeleton";
 import { Button } from "@/components/ui/button";
-import { TicketIcon } from "lucide-react";
 
 export default async function EventPage({
   params: { eventId },
