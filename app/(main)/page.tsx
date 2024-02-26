@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import SearchEvent from "@/components/SearchEvent";
 import CategoryFilter from "@/components/CategoryFilter";
+import EventsList from "@/components/EventsList";
 import hero from "@/public/hero.png";
 
 export default function Home() {
@@ -38,6 +39,8 @@ export default function Home() {
           <SearchEvent />
           <CategoryFilter />
         </div>
+
+        <EventsList />
       </section>
     </>
   );

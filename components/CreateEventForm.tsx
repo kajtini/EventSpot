@@ -1,6 +1,7 @@
 "use client";
 
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import DatePicker from "@/components/DatePicker";
 import { Button } from "@/components/ui/button";
@@ -16,30 +17,62 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { UploadDropzone } from "@/lib/uploadthing";
-import { UploadIcon } from "lucide-react";
-import { useRef } from "react";
 import UploadEventImage from "@/components/UploadEventImage";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { eventCategories } from "@/constants";
+import { createEvent } from "@/lib/actions";
+import { redirect } from "next/navigation";
 interface FormFields {
   title: string;
   description: string;
-  startDate: Date | undefined;
-  endDate: Date | undefined;
-  maxPlaces: number;
-  price: number | null;
-  isFree: boolean;
-  imageURL: string;
+  start_date: Date;
+  end_date: Date;
+  max_places: number;
+  price: number;
+  is_free: boolean;
+  image_url: string;
+  location: string;
+  category: string;
 }
 
 export default function CreateEventForm() {
-  const form = useForm<FormFields>();
+  const form = useForm<FormFields>({
+    defaultValues: {
+      title: "",
+      description: "",
+      start_date: undefined,
+      end_date: undefined,
+      max_places: 0,
+      price: 0,
+      is_free: false,
+      image_url: "",
+      location: "",
+      category: "",
+    },
+  });
 
-  const onSubmit: SubmitHandler<FormFields> = (data) => {};
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    try {
+      const eventId = await createEvent({ ...data });
 
-  const isFree = form.watch("isFree");
-  const startDate = form.watch("startDate");
-  const endDate = form.watch("endDate");
+      if (eventId) {
+        form.reset();
+        toast.success("Event has been created");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const isFree = form.watch("is_free");
+  const startDate = form.watch("start_date");
+  const endDate = form.watch("end_date");
 
   return (
     <Form {...form}>
@@ -86,6 +119,58 @@ export default function CreateEventForm() {
           )}
         />
 
+        <div className="flex items-center justify-between gap-5">
+          <FormField
+            rules={{
+              required: {
+                value: true,
+                message: "Required",
+              },
+            }}
+            name="location"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Location</FormLabel>
+                <FormControl>
+                  <Input placeholder="1st Avenue, 3rd district" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            rules={{
+              required: {
+                value: true,
+                message: "Required",
+              },
+            }}
+            name="category"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Category</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {eventCategories.map((category) => (
+                        <SelectItem key={category.id} value={category.name}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
         <div className="flex flex-col gap-5 md:flex-row md:justify-between">
           <FormField
             rules={{
@@ -94,9 +179,9 @@ export default function CreateEventForm() {
                 message: "Required",
               },
             }}
-            name="startDate"
+            name="start_date"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1">
                 <FormLabel>Start date</FormLabel>
                 <FormControl>
                   <DatePicker
@@ -104,7 +189,7 @@ export default function CreateEventForm() {
                     endDate={endDate}
                     type="startDate"
                     date={field.value}
-                    onSelect={(date) => form.setValue("startDate", date)}
+                    onSelect={(date) => form.setValue("start_date", date)}
                   />
                 </FormControl>
 
@@ -119,9 +204,9 @@ export default function CreateEventForm() {
                 message: "Required",
               },
             }}
-            name="endDate"
+            name="end_date"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1">
                 <FormLabel>End date</FormLabel>
                 <FormControl>
                   <DatePicker
@@ -129,7 +214,7 @@ export default function CreateEventForm() {
                     endDate={endDate}
                     type="endDate"
                     date={field.value}
-                    onSelect={(date) => form.setValue("endDate", date)}
+                    onSelect={(date) => form.setValue("end_date", date)}
                   />
                 </FormControl>
 
@@ -151,9 +236,9 @@ export default function CreateEventForm() {
                 message: "Value has to be more or equals 1",
               },
             }}
-            name="maxPlaces"
+            name="max_places"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1">
                 <FormLabel>Max places</FormLabel>
                 <FormControl>
                   <Input {...field} type="number" placeholder="250" />
@@ -170,13 +255,13 @@ export default function CreateEventForm() {
                 message: "Required",
               },
               min: {
-                value: 1,
+                value: 0,
                 message: "Value has to be more or equals 1",
               },
             }}
             name="price"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1">
                 <FormLabel>Price</FormLabel>
                 <FormControl>
                   <Input
@@ -195,13 +280,16 @@ export default function CreateEventForm() {
 
         <FormField
           rules={{}}
-          name="isFree"
+          name="is_free"
           render={({ field }) => (
             <FormItem className="flex flex-row gap-3 space-y-0">
               <FormControl>
                 <Checkbox
                   checked={field.value}
-                  onCheckedChange={field.onChange}
+                  onCheckedChange={(event) => {
+                    field.onChange(event);
+                    form.resetField("price");
+                  }}
                 />
               </FormControl>
               <FormLabel>Event is free</FormLabel>
@@ -218,14 +306,14 @@ export default function CreateEventForm() {
               message: "Event image is required",
             },
           }}
-          name="imageURL"
+          name="image_url"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Main image</FormLabel>
               <FormControl>
                 <UploadEventImage
                   imageURL={field.value}
-                  onChange={(url) => form.setValue("imageURL", url)}
+                  onChange={(url) => form.setValue("image_url", url)}
                 />
               </FormControl>
 

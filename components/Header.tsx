@@ -24,7 +24,7 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <SignedOut>
             <SignInButton>
-              <Button className="rounded-full">Sign in</Button>
+              <Button>Sign in</Button>
             </SignInButton>
           </SignedOut>
           <SignedIn>

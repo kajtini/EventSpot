@@ -9,7 +9,7 @@ export default function NavItems() {
   const pathname = usePathname();
 
   return (
-    <ul className=" flex flex-col gap-5 md:flex-row md:justify-between">
+    <ul className="flex flex-col gap-5 md:flex-row md:justify-between md:gap-10">
       {headerLinks.map((link) => {
         const isActive = pathname === link.route;
 

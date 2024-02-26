@@ -11,10 +11,10 @@ import {
 
 interface DatePickerProps {
   date: Date;
-  startDate: Date | undefined;
-  endDate: Date | undefined;
+  startDate: Date;
+  endDate: Date;
   type: "startDate" | "endDate";
-  onSelect: (date: Date | undefined) => void;
+  onSelect: (date: Date) => void;
 }
 
 export default function DatePicker({
@@ -39,7 +39,11 @@ export default function DatePicker({
         <Calendar
           mode="single"
           selected={date}
-          onSelect={onSelect}
+          onSelect={(day) => {
+            if (day) {
+              onSelect(day);
+            }
+          }}
           disabled={(date) => {
             if (startDate && type === "endDate") {
               return date < startDate;
