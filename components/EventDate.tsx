@@ -20,7 +20,7 @@ export default function EventDate({
     >
       <CalendarDaysIcon size={iconSize} />
       <span>
-        {format(start_date, "PPP")} - {format(end_date, "PPP")}
+        {format(start_date, "PP")} - {format(end_date, "PP")}
       </span>
     </div>
   );

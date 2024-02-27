@@ -7,7 +7,7 @@ export default function CreateEventPage() {
         Create your event
       </h2>
 
-      <CreateEventForm />
+      <CreateEventForm mode="create" />
     </div>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
 import { EditIcon, TrashIcon } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import DeleteEventDialog from "@/components/DeleteEventDialog";
+import Link from "next/link";
 
 interface EventOperationsProps {
   event_id: number;
@@ -25,14 +26,16 @@ export default function EventOperations({
       ${type === "page" && "flex-row items-center gap-2"}
       `}
       >
-        <Button
-          size={type === "card" ? "icon" : "default"}
-          variant={type === "card" ? "ghost" : "outline"}
-          className={`${type === "page" && "flex items-center gap-2"}`}
-        >
-          <EditIcon size={18} />
-          <span className={`${type === "card" && "hidden"}`}>Edit</span>
-        </Button>
+        <Link href={`/events/edit/${event_id}`}>
+          <Button
+            size={type === "card" ? "icon" : "default"}
+            variant={type === "card" ? "ghost" : "outline"}
+            className={`${type === "page" && "flex items-center gap-2"}`}
+          >
+            <EditIcon size={18} />
+            <span className={`${type === "card" && "hidden"}`}>Edit</span>
+          </Button>
+        </Link>
         <Button
           size={type === "card" ? "icon" : "default"}
           className={`${type === "page" && " flex items-center gap-2"} text-red-500`}

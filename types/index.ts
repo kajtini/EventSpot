@@ -23,4 +23,5 @@ export interface Event {
   price: number;
   is_free: boolean;
   image_url: string;
+  max_places: number;
 }

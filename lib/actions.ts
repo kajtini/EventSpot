@@ -3,7 +3,7 @@
 import { sql } from "@vercel/postgres";
 import { auth } from "@clerk/nextjs";
 
-import { CreateEventParams } from "@/types";
+import { CreateEventParams, Event } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export async function createEvent(event: CreateEventParams) {
@@ -44,8 +44,8 @@ export async function createEvent(event: CreateEventParams) {
         ${description}, 
         ${category}, 
         ${location}, 
-        ${new Date(start_date).toISOString().replace("T", " ").replace("Z", "")}, 
-        ${new Date(end_date).toISOString().replace("T", " ").replace("Z", "")}, 
+        ${new Date(start_date).toISOString()}, 
+        ${new Date(end_date).toISOString()}, 
         ${price}, 
         ${is_free}, 
         ${image_url}, 
@@ -69,6 +69,56 @@ export async function deleteEvent(event_id: number) {
     await sql`DELETE FROM event WHERE event_id = ${event_id}`;
 
     revalidatePath("/");
+  } catch (err) {
+    throw new Error(`Something bad happened ${err}`);
+  }
+}
+
+export async function updateEvent(
+  event_id: number,
+  newEvent: Omit<Event, "event_id" | "author_id">,
+) {
+  const { userId } = auth();
+
+  if (!userId) throw new Error("You must be authorized to create an event");
+
+  const {
+    title,
+    description,
+    category,
+    location,
+    start_date,
+    end_date,
+    price,
+    is_free,
+    image_url,
+    max_places,
+  } = newEvent;
+
+  try {
+    const { rows } = await sql`
+      UPDATE event
+      SET 
+        title = ${title},
+        description = ${description},
+        category = ${category},
+        location = ${location},
+        start_date = ${new Date(start_date).toISOString()},
+        end_date = ${new Date(end_date).toISOString()},
+        price = ${price},
+        is_free = ${is_free},
+        image_url = ${image_url},
+        max_places = ${max_places}
+      WHERE 
+        event_id = ${event_id}
+      RETURNING
+        event_id
+    `;
+
+    revalidatePath("/");
+    revalidatePath("/events/[eventId]");
+
+    return rows[0].event_id;
   } catch (err) {
     throw new Error(`Something bad happened ${err}`);
   }

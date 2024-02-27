@@ -27,7 +27,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { eventCategories } from "@/constants";
-import { createEvent } from "@/lib/actions";
+import { createEvent, updateEvent } from "@/lib/actions";
+
+interface CreateEventFormProps {
+  mode: "create" | "edit";
+  formValues?: FormFields;
+  event_id?: number;
+}
+
 interface FormFields {
   title: string;
   description: string;
@@ -41,32 +48,53 @@ interface FormFields {
   category: string;
 }
 
-export default function CreateEventForm() {
+export default function CreateEventForm({
+  mode,
+  formValues,
+  event_id,
+}: CreateEventFormProps) {
+  const defaultValues =
+    mode === "edit" && formValues
+      ? { ...formValues }
+      : {
+          title: "",
+          description: "",
+          start_date: undefined,
+          end_date: undefined,
+          max_places: 0,
+          price: 0,
+          is_free: false,
+          image_url: "",
+          location: "",
+          category: "",
+        };
+
   const router = useRouter();
   const form = useForm<FormFields>({
-    defaultValues: {
-      title: "",
-      description: "",
-      start_date: undefined,
-      end_date: undefined,
-      max_places: 0,
-      price: 0,
-      is_free: false,
-      image_url: "",
-      location: "",
-      category: "",
-    },
+    defaultValues,
   });
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     try {
-      const eventId = await createEvent({ ...data });
+      if (mode === "create") {
+        const eventId = await createEvent({ ...data });
 
-      if (eventId) {
-        form.reset();
-        toast.success("Event has been created");
+        if (eventId) {
+          form.reset();
+          toast.success("Event has been created");
 
-        router.push(`/events/${eventId}`);
+          router.push(`/events/${eventId}`);
+        }
+      }
+
+      if (mode === "edit" && event_id) {
+        const eventId = await updateEvent(event_id, data);
+
+        if (eventId) {
+          form.reset();
+          toast.success("Event has been updated");
+          router.push(`/events/${eventId}`);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -76,8 +104,6 @@ export default function CreateEventForm() {
   const isFree = form.watch("is_free");
   const startDate = form.watch("start_date");
   const endDate = form.watch("end_date");
-
-  console.log(new Date(startDate));
 
   return (
     <Form {...form}>
@@ -327,7 +353,22 @@ export default function CreateEventForm() {
           )}
         />
 
-        <Button type="submit">Create</Button>
+        <div className="flex items-center">
+          {mode === "edit" && (
+            <Button
+              variant="outline"
+              onClick={(e) => {
+                e.preventDefault();
+                router.push(`/events/${event_id}`);
+              }}
+            >
+              Cancel
+            </Button>
+          )}
+          <Button className="ml-auto" type="submit">
+            {mode === "create" ? "Create" : "Update"}
+          </Button>
+        </div>
       </form>
     </Form>
   );
