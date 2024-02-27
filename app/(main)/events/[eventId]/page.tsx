@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Suspense } from "react";
-import { TicketIcon } from "lucide-react";
+import { ArrowLeft, EditIcon, TicketIcon, TrashIcon } from "lucide-react";
 
 import { getEventById } from "@/lib/data";
 import EventDate from "@/components/EventDate";
@@ -9,13 +9,19 @@ import EventLocation from "@/components/EventLocation";
 import EventHostInfo from "@/components/EventHostInfo";
 import EventHostInfoSkeleton from "@/skeletons/EventHostInfoSkeleton";
 import { Button } from "@/components/ui/button";
+import { auth } from "@clerk/nextjs";
+import Link from "next/link";
+import EventOperations from "@/components/EventOperations";
 
 export default async function EventPage({
   params: { eventId },
 }: {
   params: { eventId: number };
 }) {
+  const { userId } = auth();
+
   const {
+    event_id,
     author_id,
     category,
     description,
@@ -28,8 +34,21 @@ export default async function EventPage({
     title,
   } = await getEventById(eventId);
 
+  const isUserAuthor = author_id === userId;
+
   return (
-    <div className="container my-8">
+    <div className="container my-8 flex flex-col gap-8">
+      <div className="flex items-center justify-between">
+        <Link
+          className="flex items-center gap-2 transition hover:underline"
+          href="/"
+        >
+          <ArrowLeft size={18} />
+          <span>Back home</span>
+        </Link>
+        {isUserAuthor && <EventOperations event_id={event_id} type="page" />}
+      </div>
+
       <div className="grid grid-cols-1 justify-between gap-8 lg:grid-cols-2">
         <div className="relative h-[40vh] self-start lg:h-[60vh]">
           <Image
@@ -38,6 +57,8 @@ export default async function EventPage({
             src={image_url}
             fill
           />
+
+          <div className="absolute inset-0 bg-background/5" />
         </div>
 
         <div className="flex flex-col gap-8">

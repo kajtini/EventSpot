@@ -19,6 +19,7 @@ import Link from "next/link";
 import EventLocation from "@/components/EventLocation";
 import EventPrice from "@/components/EventPrice";
 import EventDate from "@/components/EventDate";
+import EventOperations from "@/components/EventOperations";
 interface EventCardProps {
   event: Event;
 }
@@ -52,17 +53,7 @@ export default function EventCard({ event }: EventCardProps) {
           className="object-cover"
         />
 
-        {isUserAuthor && (
-          <div className="absolute right-4 top-4 z-10 flex flex-col rounded-lg bg-background/80 backdrop-blur-3xl">
-            <Button size="icon" variant="ghost">
-              <EditIcon size={18} />
-            </Button>
-
-            <Button size="icon" variant="ghost">
-              <TrashIcon className="text-red-600" size={18} />
-            </Button>
-          </div>
-        )}
+        {isUserAuthor && <EventOperations event_id={event_id} type="card" />}
 
         <Link
           href={`/events/${event_id}`}
