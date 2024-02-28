@@ -25,3 +25,8 @@ export interface Event {
   image_url: string;
   max_places: number;
 }
+
+export interface EventFilters {
+  query?: string;
+  category?: string;
+}

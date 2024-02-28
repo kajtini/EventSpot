@@ -29,6 +29,41 @@ export async function getAllEvents() {
   }
 }
 
+export async function getFilteredEvents(query: string, category: string) {
+  noStore();
+
+  try {
+    const events = await sql<Event>`
+    SELECT 
+      event_id, 
+      author_id, 
+      title, 
+      description,
+      price, 
+      is_free, 
+      location, 
+      start_date, 
+      end_date, 
+      category, 
+      max_places, 
+      image_url 
+    FROM event
+    WHERE 
+      (title ILIKE ${`%${query}%`}
+    OR
+      description ILIKE ${`%${query}%`}
+    OR 
+      location ILIKE ${`%${query}%`}
+    OR
+      price::text ILIKE ${`%${query}%`})
+    `;
+
+    return events.rows;
+  } catch (err) {
+    throw new Error(`Something went wrong: ${err}`);
+  }
+}
+
 export async function getEventById(id: number) {
   noStore();
 

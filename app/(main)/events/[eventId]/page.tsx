@@ -3,15 +3,15 @@ import { Suspense } from "react";
 import { ArrowLeft, EditIcon, TicketIcon, TrashIcon } from "lucide-react";
 
 import { getEventById } from "@/lib/data";
-import EventDate from "@/components/EventDate";
-import EventPrice from "@/components/EventPrice";
-import EventLocation from "@/components/EventLocation";
-import EventHostInfo from "@/components/EventHostInfo";
+import EventDate from "@/components/events/EventDate";
+import EventPrice from "@/components/events/EventPrice";
+import EventLocation from "@/components/events/EventLocation";
+import EventHostInfo from "@/components/events/EventHostInfo";
 import EventHostInfoSkeleton from "@/skeletons/EventHostInfoSkeleton";
 import { Button } from "@/components/ui/button";
 import { auth } from "@clerk/nextjs";
 import Link from "next/link";
-import EventOperations from "@/components/EventOperations";
+import EventOperations from "@/components/events/EventOperations";
 
 export default async function EventPage({
   params: { eventId },

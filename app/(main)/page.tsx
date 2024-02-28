@@ -1,12 +1,24 @@
 import Image from "next/image";
 
-import { Button } from "@/components/ui/button";
+import hero from "@/public/hero.png";
 import SearchEvent from "@/components/SearchEvent";
 import CategoryFilter from "@/components/CategoryFilter";
-import EventsList from "@/components/EventsList";
-import hero from "@/public/hero.png";
+import EventsList from "@/components/events/EventsList";
+import { Button } from "@/components/ui/button";
+import ClearFiltersBtn from "@/components/ClearFiltersBtn";
+import Link from "next/link";
 
-export default function Home() {
+export default function Home({
+  searchParams,
+}: {
+  searchParams: {
+    query?: string;
+    category?: string;
+  };
+}) {
+  const query = searchParams?.query || "";
+  const category = searchParams?.category || "";
+
   return (
     <>
       <section className="border-b bg-gradient-to-tl from-muted-foreground/5 to-background">
@@ -20,7 +32,9 @@ export default function Home() {
               community gatherings, we bring you the best of whats happening
               nearby.
             </p>
-            <Button size="lg">Create now!</Button>
+            <Link href="/events/create">
+              <Button size="lg">Create now!</Button>
+            </Link>
           </div>
           <Image
             src={hero}
@@ -39,9 +53,10 @@ export default function Home() {
         <div className="flex flex-col gap-3 md:flex-row">
           <SearchEvent />
           <CategoryFilter />
+          <ClearFiltersBtn />
         </div>
 
-        <EventsList />
+        <EventsList query={query} category={category} />
       </section>
     </>
   );

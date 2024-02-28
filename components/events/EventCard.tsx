@@ -11,15 +11,15 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-import EventHostInfo from "@/components/EventHostInfo";
+import EventHostInfo from "@/components/events/EventHostInfo";
 import EventHostInfoSkeleton from "@/skeletons/EventHostInfoSkeleton";
 import { Button } from "@/components/ui/button";
 import { Event } from "@/types";
 import Link from "next/link";
-import EventLocation from "@/components/EventLocation";
-import EventPrice from "@/components/EventPrice";
-import EventDate from "@/components/EventDate";
-import EventOperations from "@/components/EventOperations";
+import EventLocation from "@/components/events/EventLocation";
+import EventPrice from "@/components/events/EventPrice";
+import EventDate from "@/components/events/EventDate";
+import EventOperations from "@/components/events/EventOperations";
 interface EventCardProps {
   event: Event;
 }

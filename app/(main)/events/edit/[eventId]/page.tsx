@@ -1,4 +1,4 @@
-import CreateEventForm from "@/components/CreateEventForm";
+import CreateEventForm from "@/components/events/CreateEventForm";
 import { getEventById } from "@/lib/data";
 
 export default async function EditEventPage({
