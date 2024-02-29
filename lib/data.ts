@@ -48,14 +48,23 @@ export async function getFilteredEvents(query: string, category: string) {
       max_places, 
       image_url 
     FROM event
-    WHERE 
-      (title ILIKE ${`%${query}%`}
-    OR
-      description ILIKE ${`%${query}%`}
-    OR 
-      location ILIKE ${`%${query}%`}
-    OR
-      price::text ILIKE ${`%${query}%`})
+    WHERE
+      CASE
+        WHEN ${!!category} THEN category = ${category}
+        ELSE TRUE
+      END
+      AND
+      CASE 
+        WHEN ${!!query} THEN 
+        (title ILIKE ${`%${query}%`}
+        OR
+          description ILIKE ${`%${query}%`}
+        OR 
+          location ILIKE ${`%${query}%`}
+        OR
+          price::text ILIKE ${`%${query}%`})
+        ELSE TRUE
+      END
     `;
 
     return events.rows;

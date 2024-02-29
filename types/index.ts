@@ -18,6 +18,7 @@ export interface Event {
   description: string;
   location: string;
   start_date: Date;
+  created_at: Date;
   end_date: Date;
   category: string;
   price: number;

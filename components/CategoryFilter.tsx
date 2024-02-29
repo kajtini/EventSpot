@@ -10,6 +10,8 @@ import {
 import { eventCategories } from "@/constants";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+// Add created_at for event
+
 export default function CategoryFilter() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -18,7 +20,7 @@ export default function CategoryFilter() {
   function handleSelectClick(category: string) {
     const params = new URLSearchParams(searchParams);
 
-    if (category) {
+    if (category && category !== "All") {
       params.set("category", category);
     } else {
       params.delete("category");
@@ -32,12 +34,13 @@ export default function CategoryFilter() {
   return (
     <Select
       onValueChange={(value) => handleSelectClick(value)}
-      defaultValue={searchParams.get("category")?.toString()}
+      defaultValue={searchParams.get("category")?.toString() || "All"}
     >
       <SelectTrigger className="max-w-xs">
         <SelectValue placeholder="Category" />
       </SelectTrigger>
       <SelectContent>
+        <SelectItem value="All">All</SelectItem>
         {eventCategories.map((category) => (
           <SelectItem key={category.id} value={category.name}>
             {category.name}
