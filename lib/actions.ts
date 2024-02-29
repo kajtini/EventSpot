@@ -76,7 +76,7 @@ export async function deleteEvent(event_id: number) {
 
 export async function updateEvent(
   event_id: number,
-  newEvent: Omit<Event, "event_id" | "author_id">,
+  newEvent: Omit<Event, "event_id" | "author_id" | "created_at">,
 ) {
   const { userId } = auth();
 
