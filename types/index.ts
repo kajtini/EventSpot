@@ -1,3 +1,9 @@
+export interface Category {
+  category_id: number;
+  name: string;
+  created_at: Date;
+}
+
 export interface CreateEventParams {
   title: string;
   description: string;

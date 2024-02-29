@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 import {
   Select,
   SelectContent,
@@ -7,15 +10,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { eventCategories } from "@/constants";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Category } from "@/types";
+import { getAllCategories } from "@/lib/actions";
 
 // Add created_at for event
 
 export default function CategoryFilter() {
+  const [categories, setCategories] = useState<Category[]>([]);
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  useEffect(() => {
+    async function getCategories() {
+      try {
+        const categories = await getAllCategories();
+        setCategories([...categories]);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    getCategories();
+  }, []);
 
   function handleSelectClick(category: string) {
     const params = new URLSearchParams(searchParams);
@@ -41,11 +59,12 @@ export default function CategoryFilter() {
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="All">All</SelectItem>
-        {eventCategories.map((category) => (
-          <SelectItem key={category.id} value={category.name}>
-            {category.name}
-          </SelectItem>
-        ))}
+        {categories.length > 0 &&
+          categories.map((category) => (
+            <SelectItem key={category.category_id} value={category.name}>
+              {category.name}
+            </SelectItem>
+          ))}
       </SelectContent>
     </Select>
   );

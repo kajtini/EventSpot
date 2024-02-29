@@ -2,7 +2,7 @@
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import DatePicker from "@/components/DatePicker";
 import { Button } from "@/components/ui/button";
@@ -19,14 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import UploadEventImage from "@/components/events/UploadEventImage";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { eventCategories } from "@/constants";
+import SelectCategory from "@/components/events/SelectCategory";
 import { createEvent, updateEvent } from "@/lib/actions";
 
 interface CreateEventFormProps {
@@ -182,18 +175,10 @@ export default function CreateEventForm({
               <FormItem className="flex-1">
                 <FormLabel>Category</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {eventCategories.map((category) => (
-                        <SelectItem key={category.id} value={category.name}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <SelectCategory
+                    onChange={(value) => field.onChange(value)}
+                    value={field.value}
+                  />
                 </FormControl>
 
                 <FormMessage />

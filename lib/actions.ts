@@ -3,7 +3,7 @@
 import { sql } from "@vercel/postgres";
 import { auth } from "@clerk/nextjs";
 
-import { CreateEventParams, Event } from "@/types";
+import { Category, CreateEventParams, Event } from "@/types";
 import { revalidatePath } from "next/cache";
 
 export async function createEvent(event: CreateEventParams) {
@@ -121,5 +121,47 @@ export async function updateEvent(
     return rows[0].event_id;
   } catch (err) {
     throw new Error(`Something bad happened ${err}`);
+  }
+}
+
+// Need to have it here and not in /lib/data.ts, because im using it on the client side
+export async function getAllCategories() {
+  try {
+    const { rows } = await sql<Category>`
+    SELECT 
+      category_id,
+      name
+    FROM category
+    ORDER BY name
+    `;
+
+    return rows;
+  } catch (err) {
+    throw new Error(`Something went wrong: ${err}`);
+  }
+}
+
+export async function createCategory(category: Pick<Category, "name">) {
+  const { name } = category;
+  try {
+    const { rows } = await sql`
+    INSERT INTO 
+      category (name) 
+    VALUES 
+      (${name})
+    RETURNING category_id`;
+
+    const newCategory = await sql<Category>`
+    SELECT 
+      category_id, 
+      name, 
+      created_at
+    FROM category
+    WHERE category_id = ${rows[0].category_id}
+    `;
+
+    return newCategory.rows[0];
+  } catch (err) {
+    throw new Error(`Something went wrong: ${err}`);
   }
 }

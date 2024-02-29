@@ -1,7 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { unstable_noStore as noStore } from "next/cache";
 
-import { Event } from "@/types";
+import { Category, Event } from "@/types";
 
 export async function getAllEvents() {
   noStore();
@@ -20,7 +20,7 @@ export async function getAllEvents() {
       end_date, 
       category, 
       max_places, 
-      image_url 
+      image_url
     FROM event`;
 
     return events.rows;
@@ -32,6 +32,7 @@ export async function getAllEvents() {
 export async function getFilteredEvents(query: string, category: string) {
   noStore();
 
+  // Not fully sure about the replaceAll statement (leaving until i find anything better)
   try {
     const events = await sql<Event>`
     SELECT 
@@ -46,25 +47,28 @@ export async function getFilteredEvents(query: string, category: string) {
       end_date, 
       category, 
       max_places, 
-      image_url 
+      image_url,
+      created_at
     FROM event
     WHERE
       CASE
-        WHEN ${!!category} THEN category = ${category}
+        WHEN ${!!category} THEN category = ${category.replaceAll("+", " ")}
         ELSE TRUE
       END
       AND
       CASE 
         WHEN ${!!query} THEN 
-        (title ILIKE ${`%${query}%`}
+        (title ILIKE ${`%${query.replaceAll("+", " ")}%`}
         OR
-          description ILIKE ${`%${query}%`}
+          description ILIKE ${`%${query.replaceAll("+", " ")}%`}
         OR 
-          location ILIKE ${`%${query}%`}
+          location ILIKE ${`%${query.replaceAll("+", " ")}%`}
         OR
-          price::text ILIKE ${`%${query}%`})
+          price::text ILIKE ${`%${query.replaceAll("+", " ")}%`})
         ELSE TRUE
       END
+    ORDER BY
+      created_at DESC
     `;
 
     return events.rows;
@@ -90,8 +94,8 @@ export async function getEventById(id: number) {
       end_date, 
       category, 
       max_places, 
-      image_url 
-      FROM event
+      image_url
+    FROM event
     WHERE event_id = ${id}
     `;
 
