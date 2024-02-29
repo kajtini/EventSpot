@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 
 import hero from "@/public/hero.png";
 import SearchEvent from "@/components/SearchEvent";
 import CategoryFilter from "@/components/CategoryFilter";
 import EventsList from "@/components/events/EventsList";
 import { Button } from "@/components/ui/button";
+import EventListSkeleton from "@/skeletons/EventListSkeleton";
 
 export default function Home({
   searchParams,
@@ -54,7 +56,9 @@ export default function Home({
           <CategoryFilter />
         </div>
 
-        <EventsList query={query} category={category} />
+        <Suspense fallback={<EventListSkeleton />}>
+          <EventsList query={query} category={category} />
+        </Suspense>
       </section>
     </>
   );

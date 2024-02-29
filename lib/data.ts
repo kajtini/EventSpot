@@ -104,3 +104,31 @@ export async function getEventById(id: number) {
     throw new Error(`Something went wrong: ${err}`);
   }
 }
+
+export async function getRelatedEvents(event_id: number, category: string) {
+  noStore();
+
+  try {
+    const { rows } = await sql<Event>`
+    SELECT 
+      event_id, 
+      author_id, 
+      title, 
+      description,
+      price, 
+      is_free, 
+      location, 
+      start_date, 
+      end_date, 
+      category, 
+      max_places, 
+      image_url
+    FROM event
+    WHERE event_id != ${event_id} AND category = ${category}
+    `;
+
+    return rows;
+  } catch (err) {
+    throw new Error(`Something went wrong: ${err}`);
+  }
+}

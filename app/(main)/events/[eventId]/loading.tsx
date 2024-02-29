@@ -36,6 +36,12 @@ export default function Loading() {
           <Skeleton className="h-10 w-32" />
         </div>
       </div>
+
+      <div className="space-y-5">
+        <Skeleton className="h-8 w-36" />
+
+        {/* Insert events skeletons later */}
+      </div>
     </div>
   );
 }

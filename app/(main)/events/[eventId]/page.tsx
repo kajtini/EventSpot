@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { Suspense } from "react";
-import { ArrowLeft, EditIcon, TicketIcon, TrashIcon } from "lucide-react";
+import { ArrowLeft, TicketIcon } from "lucide-react";
+import { auth } from "@clerk/nextjs";
+import Link from "next/link";
 
 import { getEventById } from "@/lib/data";
 import EventDate from "@/components/events/EventDate";
@@ -9,9 +11,9 @@ import EventLocation from "@/components/events/EventLocation";
 import EventHostInfo from "@/components/events/EventHostInfo";
 import EventHostInfoSkeleton from "@/skeletons/EventHostInfoSkeleton";
 import { Button } from "@/components/ui/button";
-import { auth } from "@clerk/nextjs";
-import Link from "next/link";
 import EventOperations from "@/components/events/EventOperations";
+import RelatedEventsList from "@/components/events/RelatedEventsList";
+import EventListSkeleton from "@/skeletons/EventListSkeleton";
 
 export default async function EventPage({
   params: { eventId },
@@ -96,6 +98,10 @@ export default async function EventPage({
           </Button>
         </div>
       </div>
+
+      <Suspense fallback={<EventListSkeleton />}>
+        <RelatedEventsList event_id={eventId} category={category} />
+      </Suspense>
     </div>
   );
 }
