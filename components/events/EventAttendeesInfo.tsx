@@ -6,22 +6,33 @@ interface EventAttendeesInfoProps extends React.HTMLAttributes<HTMLDivElement> {
   max_places: number;
   attendeesCount: number;
   iconSize: number;
+  isPlaceLimitReached: boolean;
 }
 
 export default function EventAttendeesInfo({
   max_places,
   attendeesCount,
   iconSize,
+  isPlaceLimitReached,
   className,
 }: EventAttendeesInfoProps) {
   return (
-    <div
-      className={cn("flex items-center gap-2 text-muted-foreground", className)}
-    >
-      <User2Icon size={iconSize} />
-      <span>
-        {attendeesCount}/{max_places}
-      </span>
+    <div className="flex items-center gap-2">
+      <div
+        className={cn("flex items-center gap-2 text-muted-foreground", {
+          "rounded-full bg-yellow-600 px-3 text-yellow-100":
+            isPlaceLimitReached,
+        })}
+      >
+        <User2Icon size={iconSize} />
+        <span>
+          {attendeesCount}/{max_places}
+        </span>
+      </div>
+
+      {isPlaceLimitReached && (
+        <span className="font-medium text-yellow-600">No more places!</span>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Suspense } from "react";
-import { ArrowLeft, TicketIcon, User2Icon } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { auth } from "@clerk/nextjs";
 import Link from "next/link";
 
@@ -91,7 +91,7 @@ export default async function EventPage({
             <EventHostInfo author_id={author_id} />
           </Suspense>
 
-          <div className="space-y-6">
+          <div className="flex flex-col items-start gap-6">
             <EventLocation location={location} iconSize={24} />
             <EventDate
               start_date={start_date}
@@ -103,6 +103,7 @@ export default async function EventPage({
                 attendeesCount={attendeesCount}
                 max_places={max_places}
                 iconSize={24}
+                isPlaceLimitReached={isPlaceLimitReached}
               />
             </Suspense>
           </div>

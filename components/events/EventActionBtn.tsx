@@ -48,14 +48,6 @@ export default function EventActionBtn({
       </Button>
     );
 
-  if (isPlaceLimitReached && !hasUserJoined) {
-    return (
-      <Button disabled variant="outline" className="self-start">
-        Place limit has been reached
-      </Button>
-    );
-  }
-
   return (
     <Button
       className="flex items-center gap-2 self-start"
