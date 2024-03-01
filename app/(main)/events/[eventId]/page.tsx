@@ -1,19 +1,20 @@
 import Image from "next/image";
 import { Suspense } from "react";
-import { ArrowLeft, TicketIcon } from "lucide-react";
+import { ArrowLeft, TicketIcon, User2Icon } from "lucide-react";
 import { auth } from "@clerk/nextjs";
 import Link from "next/link";
 
-import { getEventById } from "@/lib/data";
+import { getEventAttendees, getEventById } from "@/lib/data";
 import EventDate from "@/components/events/EventDate";
 import EventPrice from "@/components/events/EventPrice";
 import EventLocation from "@/components/events/EventLocation";
 import EventHostInfo from "@/components/events/EventHostInfo";
 import EventHostInfoSkeleton from "@/skeletons/EventHostInfoSkeleton";
-import { Button } from "@/components/ui/button";
 import EventOperations from "@/components/events/EventOperations";
 import RelatedEventsList from "@/components/events/RelatedEventsList";
 import EventListSkeleton from "@/skeletons/EventListSkeleton";
+import EventActionBtn from "@/components/events/EventActionBtn";
+import EventAttendeesInfo from "@/components/events/EventAttendeesInfo";
 
 export default async function EventPage({
   params: { eventId },
@@ -21,6 +22,14 @@ export default async function EventPage({
   params: { eventId: number };
 }) {
   const { userId } = auth();
+
+  const eventDataPromise = getEventById(eventId);
+  const atendeesDataPromise = getEventAttendees(eventId);
+
+  const [eventData, atendeesData] = await Promise.all([
+    eventDataPromise,
+    atendeesDataPromise,
+  ]);
 
   const {
     event_id,
@@ -34,9 +43,17 @@ export default async function EventPage({
     price,
     start_date,
     title,
-  } = await getEventById(eventId);
+    max_places,
+  } = eventData;
+
+  const { attendees, attendeesCount } = atendeesData;
 
   const isUserAuthor = author_id === userId;
+  const isPlaceLimitReached = attendeesCount === max_places;
+  const hasEventFinished = new Date() > new Date(end_date);
+  const hasUserJoined = !!attendees.find(
+    (attender) => attender.user_id === userId,
+  );
 
   return (
     <div className="container my-8 flex flex-col gap-8">
@@ -81,6 +98,13 @@ export default async function EventPage({
               end_date={end_date}
               iconSize={24}
             />
+            <Suspense>
+              <EventAttendeesInfo
+                attendeesCount={attendeesCount}
+                max_places={max_places}
+                iconSize={24}
+              />
+            </Suspense>
           </div>
 
           <div className="space-y-2">
@@ -92,10 +116,12 @@ export default async function EventPage({
             </p>
           </div>
 
-          <Button className="flex items-center gap-2 self-start">
-            <TicketIcon size={18} />
-            <span>Buy ticket</span>
-          </Button>
+          <EventActionBtn
+            event_id={eventId}
+            hasUserJoined={hasUserJoined}
+            hasEventFinished={hasEventFinished}
+            isPlaceLimitReached={isPlaceLimitReached}
+          />
         </div>
       </div>
 

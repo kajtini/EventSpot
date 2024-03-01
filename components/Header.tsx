@@ -1,5 +1,5 @@
 import { SignInButton, SignedOut, SignedIn, UserButton } from "@clerk/nextjs";
-import { Waves } from "lucide-react";
+import { RadarIcon } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,8 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b bg-background/85 py-5 backdrop-blur-3xl">
       <div className="container flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <Waves size={24} />
-          <span className="text-xl font-medium">Eventwave</span>
+          <RadarIcon size={24} />
+          <span className="text-xl font-medium">EventSpot</span>
         </Link>
 
         <SignedIn>

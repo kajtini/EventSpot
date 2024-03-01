@@ -37,3 +37,9 @@ export interface EventFilters {
   query?: string;
   category?: string;
 }
+
+export interface EventAttender {
+  event_attender_id: number;
+  user_id: string;
+  event_id: number;
+}

@@ -53,7 +53,7 @@ export default function DatePicker({
               return date > endDate;
             }
 
-            return false;
+            return date < new Date();
           }}
           initialFocus
         />

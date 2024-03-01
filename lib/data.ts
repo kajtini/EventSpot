@@ -1,7 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { unstable_noStore as noStore } from "next/cache";
 
-import { Category, Event } from "@/types";
+import { Category, Event, EventAttender } from "@/types";
 
 export async function getAllEvents() {
   noStore();
@@ -100,6 +100,39 @@ export async function getEventById(id: number) {
     `;
 
     return rows[0];
+  } catch (err) {
+    throw new Error(`Something went wrong: ${err}`);
+  }
+}
+
+export async function getEventAttendees(id: number) {
+  noStore();
+
+  try {
+    const attendeesDataPromise = sql<EventAttender>`
+    SELECT 
+      user_id,
+      event_id
+    FROM event_attender
+    WHERE event_id = ${id}
+    `;
+
+    const attendeesCountPromise = sql`
+    SELECT 
+      COUNT(*) count
+    FROM event_attender
+    WHERE event_id = ${id}
+    `;
+
+    const [attendeesData, attendeesCount] = await Promise.all([
+      attendeesDataPromise,
+      attendeesCountPromise,
+    ]);
+
+    return {
+      attendees: attendeesData.rows,
+      attendeesCount: +attendeesCount.rows[0].count,
+    };
   } catch (err) {
     throw new Error(`Something went wrong: ${err}`);
   }

@@ -27,6 +27,7 @@ export default function Loading() {
           <div className="space-y-6">
             <Skeleton className="h-6 max-w-xs" />
             <Skeleton className="h-6 max-w-xs" />
+            <Skeleton className="h-6 max-w-28" />
           </div>
 
           <div className="space-y-2">

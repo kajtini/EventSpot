@@ -124,18 +124,44 @@ export async function updateEvent(
   }
 }
 
-// Need to have it here and not in /lib/data.ts, because im using it on the client side
-export async function getAllCategories() {
+export async function joinEvent(event_id: number) {
+  const { userId } = auth();
+
+  if (!userId) throw new Error("You must be authorized to create an event");
+
   try {
-    const { rows } = await sql<Category>`
-    SELECT 
-      category_id,
-      name
-    FROM category
-    ORDER BY name
+    const eventAttenderId = await sql`
+    INSERT INTO event_attender
+      (user_id, event_id) 
+    VALUES
+      (${userId}, ${event_id})
+    RETURNING event_attender_id
+      `;
+
+    revalidatePath("/(main)/event/[eventId]", "page");
+    revalidatePath("/");
+    return eventAttenderId;
+  } catch (err) {
+    throw new Error(`Something went wrong: ${err}`);
+  }
+}
+
+export async function leaveEvent(event_id: number) {
+  const { userId } = auth();
+
+  if (!userId) throw new Error("You must be authorized to create an event");
+
+  try {
+    await sql`
+    DELETE FROM event_attender
+    WHERE
+      user_id = ${userId}
+    AND
+      event_id = ${event_id}
     `;
 
-    return rows;
+    revalidatePath("/(main)/event/[eventId]", "page");
+    revalidatePath("/");
   } catch (err) {
     throw new Error(`Something went wrong: ${err}`);
   }
@@ -161,6 +187,23 @@ export async function createCategory(category: Pick<Category, "name">) {
     `;
 
     return newCategory.rows[0];
+  } catch (err) {
+    throw new Error(`Something went wrong: ${err}`);
+  }
+}
+
+// Need to have it here and not in /lib/data.ts, because im using it on the client side
+export async function getAllCategories() {
+  try {
+    const { rows } = await sql<Category>`
+    SELECT 
+      category_id,
+      name
+    FROM category
+    ORDER BY name
+    `;
+
+    return rows;
   } catch (err) {
     throw new Error(`Something went wrong: ${err}`);
   }
