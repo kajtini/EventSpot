@@ -1,5 +1,4 @@
 import EventCard from "@/components/events/EventCard";
-import EventsList from "@/components/events/EventsList";
 import { getRelatedEvents } from "@/lib/data";
 
 interface RelatedEventsListProps {
