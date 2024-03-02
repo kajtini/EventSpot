@@ -19,20 +19,22 @@ export default function EventAttendeesInfo({
   return (
     <div className="flex items-center gap-2">
       <div
-        className={cn("flex items-center gap-2 text-muted-foreground", {
-          "rounded-full bg-yellow-600 px-3 text-yellow-100":
-            isPlaceLimitReached,
-        })}
+        className={cn(
+          "flex items-center gap-2 text-muted-foreground",
+          {
+            "rounded-full bg-sky-600 px-3 text-sky-100": isPlaceLimitReached,
+          },
+          className,
+        )}
       >
         <User2Icon size={iconSize} />
         <span>
           {attendeesCount}/{max_places}
         </span>
       </div>
-
       {isPlaceLimitReached && (
-        <span className="font-medium text-yellow-600">No more places!</span>
-      )}
+        <span className="font-medium text-sky-600">No more places</span>
+      )}{" "}
     </div>
   );
 }

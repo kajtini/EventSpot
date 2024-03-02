@@ -13,7 +13,7 @@ export default async function EventHostInfo({ author_id }: EventHostInfoProps) {
   return (
     <div className="flex items-center gap-2">
       <Avatar className="h-8 w-8">
-        <AvatarImage src={imageUrl} />
+        <AvatarImage alt="Event host image" src={imageUrl} />
         <AvatarFallback>KK</AvatarFallback>
       </Avatar>
 

@@ -1,7 +1,9 @@
 "use client";
 
-import { DoorOpenIcon, TicketIcon } from "lucide-react";
+import { DoorClosedIcon, DoorOpenIcon } from "lucide-react";
 import { toast } from "sonner";
+import Link from "next/link";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { joinEvent, leaveEvent } from "@/lib/actions";
@@ -49,15 +51,34 @@ export default function EventActionBtn({
     );
 
   return (
-    <Button
-      className="flex items-center gap-2 self-start"
-      onClick={hasUserJoined ? handleLeaveEventClick : handleJoinEventClick}
-      variant={hasUserJoined ? "secondary" : "default"}
-      disabled={isPlaceLimitReached && !hasUserJoined}
-    >
-      {hasUserJoined ? <DoorOpenIcon size={18} /> : <TicketIcon size={18} />}
+    <>
+      <SignedIn>
+        <Button
+          className="flex items-center gap-2 self-start"
+          onClick={hasUserJoined ? handleLeaveEventClick : handleJoinEventClick}
+          variant={hasUserJoined ? "secondary" : "default"}
+          disabled={isPlaceLimitReached && !hasUserJoined}
+        >
+          {hasUserJoined ? (
+            <DoorOpenIcon size={18} />
+          ) : (
+            <DoorClosedIcon size={18} />
+          )}
 
-      <span>{hasUserJoined ? "Leave event" : "Join event"}</span>
-    </Button>
+          <span>{hasUserJoined ? "Leave event" : "Join event"}</span>
+        </Button>
+      </SignedIn>
+      <SignedOut>
+        <Link href="/sign-in">
+          <Button
+            variant="outline"
+            className="item-center flex gap-2 self-start"
+          >
+            <DoorClosedIcon size={18} />
+            <span>Join event</span>
+          </Button>
+        </Link>
+      </SignedOut>
+    </>
   );
 }

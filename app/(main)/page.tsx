@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { Suspense } from "react";
 
 import hero from "@/public/hero.png";
@@ -33,9 +34,18 @@ export default function Home({
               community gatherings, we bring you the best of whats happening
               nearby.
             </p>
-            <Link href="/events/create">
-              <Button size="lg">Create now!</Button>
-            </Link>
+
+            {/* Figuring out how to do it inside the middleware still. For now this solution will do */}
+            <SignedIn>
+              <Link href="/events/create">
+                <Button size="lg">Create now!</Button>
+              </Link>
+            </SignedIn>
+            <SignedOut>
+              <Link href="/sign-in">
+                <Button size="lg">Create now!</Button>
+              </Link>
+            </SignedOut>
           </div>
           <Image
             src={hero}
