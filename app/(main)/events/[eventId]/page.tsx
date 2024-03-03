@@ -18,10 +18,16 @@ import EventAttendeesInfo from "@/components/events/EventAttendeesInfo";
 
 export default async function EventPage({
   params: { eventId },
+  searchParams,
 }: {
   params: { eventId: number };
+  searchParams: {
+    page?: string;
+  };
 }) {
   const { userId } = auth();
+
+  const page = searchParams?.page || "1";
 
   const eventDataPromise = getEventById(eventId);
   const atendeesDataPromise = getEventAttendees(eventId);
@@ -127,7 +133,11 @@ export default async function EventPage({
       </div>
 
       <Suspense fallback={<EventListSkeleton />}>
-        <RelatedEventsList event_id={eventId} category={category} />
+        <RelatedEventsList
+          event_id={eventId}
+          category={category}
+          currentPage={+page}
+        />
       </Suspense>
     </div>
   );

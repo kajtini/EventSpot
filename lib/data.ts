@@ -1,40 +1,21 @@
 import { sql } from "@vercel/postgres";
 import { unstable_noStore as noStore } from "next/cache";
 
-import { Category, Event, EventAttender } from "@/types";
+import { Event, EventAttender } from "@/types";
 
-export async function getAllEvents() {
+export async function getFilteredEvents(
+  query: string,
+  category: string,
+  page: number,
+  limit = 6,
+) {
   noStore();
 
-  try {
-    const events = await sql<Event>`
-    SELECT 
-      event_id, 
-      author_id, 
-      title, 
-      description,
-      price, 
-      is_free, 
-      location, 
-      start_date, 
-      end_date, 
-      category, 
-      max_places, 
-      image_url
-    FROM event`;
-
-    return events.rows;
-  } catch (err) {
-    throw new Error(`Something went wrong: ${err}`);
-  }
-}
-
-export async function getFilteredEvents(query: string, category: string) {
-  noStore();
+  const offset = (page - 1) * limit;
 
   // Not fully sure about the replaceAll statement (leaving until i find anything better)
   try {
-    const events = await sql<Event>`
+    const eventsPromise = sql<Event>`
     SELECT 
       event_id, 
       author_id, 
@@ -69,9 +50,39 @@ export async function getFilteredEvents(query: string, category: string) {
       END
     ORDER BY
       created_at DESC
+    LIMIT ${limit}
+    OFFSET ${offset}
     `;
 
-    return events.rows;
+    const eventCountPromise = sql`
+    SELECT 
+      COUNT(*) 
+    FROM event
+    WHERE
+      CASE
+        WHEN ${!!category} THEN category = ${category.replaceAll("+", " ")}
+        ELSE TRUE
+      END
+      AND
+      CASE 
+        WHEN ${!!query} THEN 
+        (title ILIKE ${`%${query.replaceAll("+", " ")}%`}
+        OR
+          description ILIKE ${`%${query.replaceAll("+", " ")}%`}
+        OR 
+          location ILIKE ${`%${query.replaceAll("+", " ")}%`}
+        OR
+          price::text ILIKE ${`%${query.replaceAll("+", " ")}%`})
+        ELSE TRUE
+      END
+`;
+
+    const [events, eventCount] = await Promise.all([
+      eventsPromise,
+      eventCountPromise,
+    ]);
+
+    return { events: events.rows, eventCount: eventCount.rows[0].count };
   } catch (err) {
     throw new Error(`Something went wrong: ${err}`);
   }
@@ -138,11 +149,18 @@ export async function getEventAttendees(id: number) {
   }
 }
 
-export async function getRelatedEvents(event_id: number, category: string) {
+export async function getRelatedEvents(
+  event_id: number,
+  category: string,
+  page: number,
+  limit = 3,
+) {
   noStore();
 
+  const offset = (page - 1) * limit;
+
   try {
-    const { rows } = await sql<Event>`
+    const relatedEventsPromise = sql<Event>`
     SELECT 
       event_id, 
       author_id, 
@@ -158,9 +176,26 @@ export async function getRelatedEvents(event_id: number, category: string) {
       image_url
     FROM event
     WHERE event_id != ${event_id} AND category = ${category}
+    LIMIT ${limit}
+    OFFSET ${offset}
     `;
 
-    return rows;
+    const relatedEventCountPromise = sql`
+    SELECT 
+      COUNT(*)
+    FROM event
+    WHERE event_id != ${event_id} AND category = ${category}
+    `;
+
+    const [relatedEvents, relatedEventCount] = await Promise.all([
+      relatedEventsPromise,
+      relatedEventCountPromise,
+    ]);
+
+    return {
+      relatedEvents: relatedEvents.rows,
+      relatedEventCount: relatedEventCount.rows[0].count,
+    };
   } catch (err) {
     throw new Error(`Something went wrong: ${err}`);
   }

@@ -39,6 +39,10 @@ export default function CategoryFilter() {
     const params = new URLSearchParams(searchParams);
 
     if (category && category !== "All") {
+      if (!!params.get("page")) {
+        params.delete("page");
+      }
+
       params.set("category", category);
     } else {
       params.delete("category");

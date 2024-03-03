@@ -14,6 +14,10 @@ export default function SearchEvent() {
     const params = new URLSearchParams(searchParams);
 
     if (query) {
+      if (!!params.get("page")) {
+        params.delete("page");
+      }
+
       params.set("query", query);
     } else {
       params.delete("query");

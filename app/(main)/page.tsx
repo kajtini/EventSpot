@@ -9,17 +9,27 @@ import CategoryFilter from "@/components/CategoryFilter";
 import EventsList from "@/components/events/EventsList";
 import { Button } from "@/components/ui/button";
 import EventListSkeleton from "@/skeletons/EventListSkeleton";
+import { getFilteredEvents } from "@/lib/data";
+import EventsPagination from "@/components/EventsPagination";
 
-export default function Home({
+export default async function Home({
   searchParams,
 }: {
   searchParams: {
     query?: string;
     category?: string;
+    page?: string;
   };
 }) {
   const query = searchParams?.query || "";
   const category = searchParams?.category || "";
+  const page = searchParams?.page || "1";
+
+  const { events, eventCount } = await getFilteredEvents(
+    query,
+    category,
+    +page,
+  );
 
   return (
     <>
@@ -67,7 +77,12 @@ export default function Home({
         </div>
 
         <Suspense fallback={<EventListSkeleton />}>
-          <EventsList query={query} category={category} />
+          <EventsList
+            events={events}
+            page={+page}
+            eventCount={eventCount}
+            limit={6}
+          />
         </Suspense>
       </section>
     </>

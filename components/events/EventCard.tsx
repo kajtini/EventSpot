@@ -13,7 +13,6 @@ import Image from "next/image";
 
 import EventHostInfo from "@/components/events/EventHostInfo";
 import EventHostInfoSkeleton from "@/skeletons/EventHostInfoSkeleton";
-import { Button } from "@/components/ui/button";
 import { Event } from "@/types";
 import Link from "next/link";
 import EventLocation from "@/components/events/EventLocation";
