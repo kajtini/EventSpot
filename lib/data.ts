@@ -116,6 +116,96 @@ export async function getEventById(id: number) {
   }
 }
 
+export async function getUserEvents(userId: string, page: number, limit = 3) {
+  noStore();
+
+  const offset = (page - 1) * limit;
+
+  try {
+    const eventsPromise = sql<Event>`
+    SELECT 
+      event_id, 
+      author_id, 
+      title, 
+      description,
+      price, 
+      is_free, 
+      location, 
+      start_date, 
+      end_date, 
+      category, 
+      max_places, 
+      image_url
+    FROM event
+    WHERE author_id = ${userId}
+    LIMIT ${limit}
+    OFFSET ${offset}
+    `;
+    const eventCountPromise = sql`
+    SELECT 
+      COUNT(*)
+    FROM event
+    WHERE author_id = ${userId}
+    `;
+
+    const [events, eventCount] = await Promise.all([
+      eventsPromise,
+      eventCountPromise,
+    ]);
+
+    return { events: events.rows, eventCount: eventCount.rows[0].count };
+  } catch (err) {
+    throw new Error(`Something went wrong: ${err}`);
+  }
+}
+
+export async function getUserJoinedEvents(
+  userId: string,
+  page: number,
+  limit = 3,
+) {
+  noStore();
+
+  const offset = (page - 1) * limit;
+
+  try {
+    const eventsPromise = sql<Event>`
+    SELECT 
+      e.event_id, 
+      author_id, 
+      title, 
+      description,
+      price, 
+      is_free, 
+      location, 
+      start_date, 
+      end_date, 
+      category, 
+      max_places, 
+      image_url
+    FROM event e
+    INNER JOIN event_attender ea ON e.event_id = ea.event_id AND ea.user_id = ${userId}
+    LIMIT ${limit}
+    OFFSET ${offset}
+    `;
+    const eventCountPromise = sql`
+    SELECT 
+      COUNT(*)
+    FROM event
+    WHERE author_id = ${userId}
+    `;
+
+    const [events, eventCount] = await Promise.all([
+      eventsPromise,
+      eventCountPromise,
+    ]);
+
+    return { events: events.rows, eventCount: eventCount.rows[0].count };
+  } catch (err) {
+    throw new Error(`Something went wrong: ${err}`);
+  }
+}
+
 export async function getEventAttendees(id: number) {
   noStore();
 

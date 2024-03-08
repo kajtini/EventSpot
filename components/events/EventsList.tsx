@@ -22,10 +22,7 @@ export default function EventsList({
       <div className="flex flex-col items-center gap-4 py-16">
         <PackageSearchIcon size={32} />
         <div className="text-center">
-          <p className="text-xl font-medium">No results found</p>
-          <p className="text-muted-foreground">
-            Try changing, or clearing your filters
-          </p>
+          <p className="text-xl font-medium">No events found</p>
         </div>
       </div>
     );

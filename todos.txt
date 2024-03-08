@@ -1,13 +1,2 @@
-What now?
-- add infinite scroll for events
-- think of what happens when there are already attendees and creator tries to lower the max places below the currently signed users
-- Justify price to something like work in progress (payment at place)
-- my profile page
-
-NOW:
-
-
-DONE:
-- ForeignKey fix attender onDelete
-- protect create-event route from unsigned users (partly)
-- Prevent users from joining the event without being logged in
+KNOWN ISSUES:
+-can create event when sign out without refreshing the page
