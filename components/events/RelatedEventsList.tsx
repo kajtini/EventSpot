@@ -22,17 +22,12 @@ export default async function RelatedEventsList({
   if (relatedEvents.length === 0) return null;
 
   return (
-    <div className="space-y-5">
-      <p className="text-balance text-xl font-medium md:text-2xl">
-        Related Events
-      </p>
-
-      <EventsList
-        events={relatedEvents}
-        page={currentPage}
-        eventCount={relatedEventCount}
-        limit={3}
-      />
-    </div>
+    <EventsList
+      events={relatedEvents}
+      page={currentPage}
+      eventCount={relatedEventCount}
+      limit={3}
+      label="Related Events"
+    />
   );
 }

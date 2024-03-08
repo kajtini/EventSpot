@@ -9,6 +9,7 @@ interface EventsListProps {
   page: number;
   eventCount: number;
   limit: number;
+  label?: string;
 }
 
 export default function EventsList({
@@ -16,6 +17,7 @@ export default function EventsList({
   page,
   eventCount,
   limit,
+  label,
 }: EventsListProps) {
   if (events.length === 0) {
     return (
@@ -30,6 +32,10 @@ export default function EventsList({
 
   return (
     <div className="space-y-5">
+      {label && (
+        <p className="text-balance text-xl font-medium md:text-2xl">{label}</p>
+      )}
+
       <ul className="grid gap-8 md:grid-cols-3">
         {events.map((event) => (
           <EventCard key={event.event_id} event={event} />
